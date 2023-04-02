@@ -37,6 +37,8 @@ const filterByDirector = (director) => {
     var filteredMovies = (!!director && director != "")  
                         ? movies.filter(movie => movie.director.toLowerCase().includes(director.toLowerCase()))
                         : movies;
+
+    // take into account current date filter
     if (dateFilter !== '') {
         filteredMovies = filteredMovies.filter(movie => movie.date == dateFilter || movie.date.toString().includes(dateFilter));
     }
@@ -48,12 +50,15 @@ const filterByDate = (date) => {
     var filteredMovies = (!!date && date != "")  
                         ? movies.filter(movie => movie.date == date || movie.date.toString().includes(date))
                         : movies;
+
+    // take into account current director filter
     if (directorFilter !== '') {
         filteredMovies = filteredMovies.filter(movie => movie.director.toLowerCase().includes(directorFilter.toLowerCase()));
     }
     setFilteredMovies(filteredMovies);
 };
 
+// update list when tab is displayed
 useEffect( () => { 
     if(isFocused) updateMovies(); 
 }, [isFocused]);
@@ -94,16 +99,16 @@ useEffect( () => {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
+        flex: 1,
+        backgroundColor: '#fff',
     },
     separator: {
         height: 1,
         backgroundColor: '#ccc',
         marginVertical: 10,
-      },
+    },
     screen: {
-      backgroundColor: '#eee',
+        backgroundColor: '#eee',
     },
     input: {
         backgroundColor: '#fff',
@@ -112,19 +117,18 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginVertical: 5,
-      },
+    },
     movieContainer: {
-      backgroundColor: '#fff',
-      marginBottom: 5,
-      padding: 10,
+        backgroundColor: '#fff',
+        marginBottom: 5,
+        padding: 10,
     },
     movieTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     movieInfo: {
-      fontSize: 14,
-      marginTop: 5,
+        fontSize: 14,
+        marginTop: 5,
     },
-  });
-  
+});
