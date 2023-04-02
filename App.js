@@ -1,12 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import MoviesList from './MoviesList';
+import AddMovie from './AddMovie';
 
 export default function App() {
+  const Stack = createNativeStackNavigator();
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      
+      <Stack.Navigator initialRouteName="MoviesList">
+        {/* <Stack.Screen name={'MoviesList'} options={{title: "Movies List"}} component={MoviesList} /> */}
+        <Stack.Screen
+        name={'MoviesList'}
+        component={MoviesList}
+        options={{
+          title: "Movies List",
+          headerRight: () => {
+            const navigation = useNavigation();
+            return (
+              <Button
+                onPress={() => navigation.navigate("AddMovie")}
+                title="Add movie"
+                color="#000"
+              />
+            );
+          },
+        }}
+      />
+        <Stack.Screen name={'AddMovie'} component={AddMovie} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
