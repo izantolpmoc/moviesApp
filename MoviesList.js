@@ -21,6 +21,7 @@ const [movies, setMovies] = useState(init_movies);
 const [filteredMovies, setFilteredMovies] = useState(movies);
 const [dateFilter, setDateFilter] = useState('');
 const [directorFilter, setDirectorFilter] = useState('');
+const [titleFilter, setTitleFilter] = useState('');
 const addedMovie = route.params;
 const isFocused = useIsFocused();
 
@@ -34,65 +35,100 @@ const updateMovies = () => {
 
 const filterByDirector = (director) => {
     setDirectorFilter(director);
-    var filteredMovies = (!!director && director != "")  
+    let filteredMovies = (!!director && director !== '')
                         ? movies.filter(movie => movie.director.toLowerCase().includes(director.toLowerCase()))
                         : movies;
 
-    // take into account current date filter
+    // take into account other filters
     if (dateFilter !== '') {
-        filteredMovies = filteredMovies.filter(movie => movie.date == dateFilter || movie.date.toString().includes(dateFilter));
+      filteredMovies = filteredMovies.filter(movie => movie.date == dateFilter || movie.date.toString().includes(dateFilter));
     }
+    if (titleFilter !== '') {
+      filteredMovies = filteredMovies.filter(movie => movie.title.toLowerCase().includes(titleFilter.toLowerCase()));
+    }
+
     setFilteredMovies(filteredMovies);
 };
 
 const filterByDate = (date) => {
     setDateFilter(date);
-    var filteredMovies = (!!date && date != "")  
+    let filteredMovies = (!!date && date !== '')
                         ? movies.filter(movie => movie.date == date || movie.date.toString().includes(date))
                         : movies;
 
-    // take into account current director filter
+    // take into account other filters
     if (directorFilter !== '') {
         filteredMovies = filteredMovies.filter(movie => movie.director.toLowerCase().includes(directorFilter.toLowerCase()));
     }
+    if (titleFilter !== '') {
+        filteredMovies = filteredMovies.filter(movie => movie.title.toLowerCase().includes(titleFilter.toLowerCase()));
+    }
+
+    setFilteredMovies(filteredMovies);
+};
+
+const filterByTitle = (title) => {
+    setTitleFilter(title);
+    let filteredMovies = (!!title && title !== '')
+                        ? movies.filter(movie => movie.title.toLowerCase().includes(title.toLowerCase()))
+                        : movies;
+
+    // take into account other filters
+    if (directorFilter !== '') {
+        filteredMovies = filteredMovies.filter(movie => movie.director.toLowerCase().includes(directorFilter.toLowerCase()));
+    }
+    if (dateFilter !== '') {
+        filteredMovies = filteredMovies.filter(movie => movie.date == dateFilter || movie.date.toString().includes(dateFilter));
+    }
+
     setFilteredMovies(filteredMovies);
 };
 
 // update list when tab is displayed
-useEffect( () => { 
-    if(isFocused) updateMovies(); 
+useEffect(() => {
+    if (isFocused) updateMovies();
 }, [isFocused]);
-
 
     return (
         <View style={styles.screen}>
-            <Text>Filter by release year:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter release date (year)"
-                onChangeText={text => filterByDate(text)}
-            />
-            <Text>Filter by director:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter director name"
-                onChangeText={text => filterByDirector(text)}
-            />
-            <View style={styles.separator} />
-            {filteredMovies.length > 0 && 
-                <FlatList
-                data={filteredMovies}
-                keyExtractor={item => item.title}
-                renderItem={({item}) => 
-                    <View style={styles.movieContainer}>
-                    <Text style={styles.movieTitle}>{item.title} ({item.date})</Text>
-                    <Text style={styles.movieInfo}>Director: {item.director}</Text>
-                    <Text style={styles.movieInfo}>Rating: {item.rating}/20</Text>
-                    </View>
-                }
-                />
+        <Text>Filter by release year:</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Enter release date (year)"
+            onChangeText={text => filterByDate(text)}
+        />
+
+        <Text>Filter by director:</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Enter director name"
+            onChangeText={text => filterByDirector(text)}
+        />
+
+        <Text>Filter by title:</Text>
+        <TextInput
+            style={styles.input}
+            placeholder="Enter movie title"
+            onChangeText={text => filterByTitle(text)}
+        />
+
+        <View style={styles.separator} />
+
+        {filteredMovies.length > 0 &&
+            <FlatList
+            data={filteredMovies}
+            keyExtractor={item => item.title}
+            renderItem={({ item }) =>
+                <View style={styles.movieContainer}>
+                <Text style={styles.movieTitle}>{item.title} ({item.date})</Text>
+                <Text style={styles.movieInfo}>Director: {item.director}</Text>
+                <Text style={styles.movieInfo}>Rating: {item.rating}/20</Text>
+                </View>
             }
-            {filteredMovies.length == 0 && <Text>No movie found.</Text>}
+            />
+        }
+
+        {filteredMovies.length === 0 && <Text>No movie found.</Text>}
         </View>
     );
 }
@@ -108,6 +144,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     screen: {
+        flex: 1,
         backgroundColor: '#eee',
     },
     input: {
